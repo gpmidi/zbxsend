@@ -2,16 +2,21 @@
 Created on Jan 11, 2014
 
 @author: Paulson McIntyre (GpMidi) <paul@gpmidi.net>
+@author: Sergey Kirillov <https://github.com/pistolero>
+@license: BSD 
+@note: Originally part of https://github.com/pistolero/zbxsend/blob/master/zbxsend.py
 '''
 import time
 import logging
 try:
     import json  # @UnresolvedImport
 except:
-    import simplejson as json  # @UnresolvedImport
+    import simplejson as json  # @UnresolvedImport @Reimport
 
 
 class Metric(object):
+    """ A Zabbix metric data point 
+    """
     l = logging.getLogger(Metric.__module__ + "." + Metric.__class__.__name__)
 
     def __init__(self, host, key, value, clock = None):
