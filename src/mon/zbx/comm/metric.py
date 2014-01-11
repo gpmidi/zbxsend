@@ -8,6 +8,7 @@ Created on Jan 11, 2014
 '''
 import time
 import logging
+import socket
 try:
     import json  # @UnresolvedImport
 except:
@@ -19,7 +20,8 @@ class Metric(object):
     """
     l = logging.getLogger(Metric.__module__ + "." + Metric.__class__.__name__)
 
-    def __init__(self, host, key, value, clock = None):
+    def __init__(self, key, value, host = socket.getfqdn(), clock = None):
+        # TODO: Add sanity checks for the args
         self.host = host
         self.key = key
         self.value = value
@@ -27,8 +29,8 @@ class Metric(object):
 
     def __repr__(self):
         if self.clock is None:
-            return 'Metric(%r, %r, %r)' % (self.host, self.key, self.value)
-        return 'Metric(%r, %r, %r, %r)' % (self.host, self.key, self.value, self.clock)
+            return '%s(host=%r, key=%r, value=%r)' % (self.__class__.__name__, self.host, self.key, self.value)
+        return '%s(host=%r, key=%r, value=%r, clock=%r)' % (self.__class__.__name__, self.host, self.key, self.value, self.clock)
 
     def toZbxJSON(self):
         """ Convert to JSON that Zabbix will accept """
