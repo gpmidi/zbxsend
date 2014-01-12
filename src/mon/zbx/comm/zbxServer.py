@@ -69,6 +69,7 @@ class ZabbixServer(threading.Thread):
         @type priority: Int
         """
         self.l.debug("Queuing up %r to send", metric)
+        assert hasattr(metric, 'toZbxJSON'), "Expected metric to have a toZbxJSON method"
         self.q.put(
                    item = (int(priority), metric),
                    block = block,
