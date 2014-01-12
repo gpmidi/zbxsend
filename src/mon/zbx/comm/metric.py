@@ -18,9 +18,9 @@ except:
 class Metric(object):
     """ A Zabbix metric data point 
     """
-    l = logging.getLogger(Metric.__module__ + "." + Metric.__class__.__name__)
 
     def __init__(self, key, value, host = socket.getfqdn(), clock = None):
+        self.l = logging.getLogger(self.__module__ + "." + self.__class__.__name__)
         # TODO: Add sanity checks for the args
         self.host = host
         self.key = key

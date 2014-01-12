@@ -124,7 +124,7 @@ class ZabbixServer(threading.Thread):
                 return False
             return True
         except Exception,e:
-            self.l.warn("Failed to send %d metrics with %r",len(metrics),e)
+            self.l.exception("Failed to send %d metrics with %r", len(metrics), e)
             return False
 
     def run(self):
