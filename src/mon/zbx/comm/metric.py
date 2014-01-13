@@ -18,8 +18,11 @@ except:
 class Metric(object):
     """ A Zabbix metric data point 
     """
+    DEFAULT_KEY = lambda metric: None
+    DEFAULT_VALUE = lambda metric: None
+    DEFAULT_HOST = lambda metric: socket.getfqdn()
 
-    def __init__(self, key, value, host = socket.getfqdn(), clock = None):
+    def __init__(self, key = None, value = None, host = None, clock = None):
         self.l = logging.getLogger(self.__module__ + "." + self.__class__.__name__)
         # TODO: Add sanity checks for the args
         self.host = host
@@ -27,15 +30,43 @@ class Metric(object):
         self.value = value
         self.clock = clock
 
+    def getKey(self):
+        if self.key is None:
+            return self.DEFAULT_KEY()
+        return self.key
+
+    def getValue(self):
+        if self.value is None:
+            return self.DEFAULT_VALUE()
+        return self.value
+
+    def getHost(self):
+        if self.host is None:
+            return self.DEFAULT_HOST()
+        return self.host
+
+    def getClock(self):
+        return self.clock or time.time()
+
     def __repr__(self):
         if self.clock is None:
-            return '%s(host=%r, key=%r, value=%r)' % (self.__class__.__name__, self.host, self.key, self.value)
-        return '%s(host=%r, key=%r, value=%r, clock=%r)' % (self.__class__.__name__, self.host, self.key, self.value, self.clock)
+            return '%s(host=%r, key=%r, value=%r)' % (
+                                                      self.__class__.__name__,
+                                                      self.getHost(),
+                                                      self.getKey(),
+                                                      self.getValue(),
+                                                      )
+        return '%s(host=%r, key=%r, value=%r, clock=%r)' % (
+                                                            self.__class__.__name__,
+                                                            self.getHost(),
+                                                            self.getKey(),
+                                                            self.getValue(),
+                                                            self.getClock(),
+                                                            )
 
     def toZbxJSON(self):
         """ Convert to JSON that Zabbix will accept """
         # Zabbix has very fragile JSON parser, and we cannot use json to dump whole packet
-        clock = self.clock or time.time()
         ret = (
                '\t\t{\n'
                '\t\t\t"host":%s,\n'
@@ -43,10 +74,10 @@ class Metric(object):
                '\t\t\t"value":%s,\n'
                '\t\t\t"clock":%s}'
                ) % (
-                    json.dumps(self.host),
-                    json.dumps(self.key),
-                    json.dumps(self.value),
-                    clock,
+                    json.dumps(self.getHost()),
+                    json.dumps(self.getKey()),
+                    json.dumps(self.getValue()),
+                    self.getClock(),
                     )
-        self.l.log(3, "Seralized %r to %r", self, ret)
+        self.l.log(3, "Serialized %r to %r", self, ret)
         return ret
