@@ -60,6 +60,9 @@ class DiscoveryMetric(Metric):
                 assert isinstance(v, str) or isinstance(v, unicode), "Metric value %r isn't a string" % v
         self.discovered.append(macros)
 
+    def clearMetrics(self):
+        self.discovered = []
+
     def getValue(self):
         asObjs = dict(data = self.getDiscovered())
         asStr = json.dumps(asObjs, indent = 0).replace('   ', '\t')
